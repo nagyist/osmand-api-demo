@@ -28,16 +28,13 @@ import net.osmand.plus.routing.RoutingHelper;
 import net.osmand.plus.settings.backend.ApplicationMode;
 import net.osmand.plus.settings.backend.OsmandSettings;
 import net.osmand.plus.utils.AndroidUtils;
+import net.osmand.plus.utils.InsetTarget;
+import net.osmand.plus.utils.InsetTarget.InsetTargetBuilder;
 import net.osmand.plus.utils.InsetsUtils;
-import net.osmand.plus.utils.InsetsUtils.InsetSide;
 import net.osmand.plus.utils.NativeUtilities;
 import net.osmand.plus.views.MapViewWithLayers;
 import net.osmand.plus.views.OsmandMapTileView;
 import net.osmand.plus.views.OsmandMapTileView.OnLongClickListener;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
 
 public class NavigateMapActivity extends OsmandActionBarActivity {
 
@@ -90,8 +87,12 @@ public class NavigateMapActivity extends OsmandActionBarActivity {
 		super.onContentChanged();
 
 		View root = findViewById(R.id.root);
-		List<InsetSide> sides = Arrays.asList(LEFT, TOP, RIGHT, BOTTOM);
-		InsetsUtils.setWindowInsetsListener(root, new HashSet<>(sides));
+		InsetTargetBuilder builder = InsetTarget.builder(root)
+				.portraitSides(BOTTOM, TOP)
+				.landscapeSides(TOP, RIGHT, LEFT);
+
+		InsetsUtils.setWindowInsetsListener(root, (view, windowInsetsCompat)
+				-> InsetsUtils.applyPadding(view, windowInsetsCompat, builder.build()), true);
 	}
 
 	@Override
